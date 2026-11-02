@@ -104,7 +104,11 @@ pub enum RemoteError {
     /// clients.
     InvalidRequest(Option<Value>),
     /// A custom error, defined by the client.
-    Custom { code: i64, message: String, data: Option<Value> },
+    Custom {
+        code: i64,
+        message: String,
+        data: Option<Value>,
+    },
     /// An error that cannot be represented by an error object.
     ///
     /// This error is intended to accommodate clients that return arbitrary
@@ -121,7 +125,11 @@ impl RemoteError {
     {
         let message = message.as_ref().into();
         let data = data.into();
-        RemoteError::Custom { code, message, data }
+        RemoteError::Custom {
+            code,
+            message,
+            data,
+        }
     }
 }
 
@@ -189,7 +197,11 @@ impl<'de> Deserialize<'de> for RemoteError {
 
         Ok(match resp.code {
             -32600 => RemoteError::InvalidRequest(resp.data),
-            _ => RemoteError::Custom { code: resp.code, message: resp.message, data: resp.data },
+            _ => RemoteError::Custom {
+                code: resp.code,
+                message: resp.message,
+                data: resp.data,
+            },
         })
     }
 }
@@ -201,7 +213,11 @@ impl Serialize for RemoteError {
     {
         let (code, message, data) = match *self {
             RemoteError::InvalidRequest(ref d) => (-32600, "Invalid request", d),
-            RemoteError::Custom { code, ref message, ref data } => (code, message.as_ref(), data),
+            RemoteError::Custom {
+                code,
+                ref message,
+                ref data,
+            } => (code, message.as_ref(), data),
             RemoteError::Unknown(_) => panic!(
                 "The 'Unknown' error variant is \
                  not intended for client use."
@@ -209,7 +225,11 @@ impl Serialize for RemoteError {
         };
         let message = message.to_owned();
         let data = data.to_owned();
-        let err = ErrorHelper { code, message, data };
+        let err = ErrorHelper {
+            code,
+            message,
+            data,
+        };
         err.serialize(serializer)
     }
 }

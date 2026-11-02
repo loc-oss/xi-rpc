@@ -15,7 +15,7 @@
 //! Types and helpers used for testing.
 
 use std::io::{self, Cursor, Write};
-use std::sync::mpsc::{channel, Receiver, Sender};
+use std::sync::mpsc::{Receiver, Sender, channel};
 use std::time::{Duration, Instant};
 
 use serde_json::{self, Value};
@@ -106,7 +106,7 @@ impl Write for DummyWriter {
         let s = String::from_utf8(buf.to_vec()).unwrap();
         self.0
             .send(s)
-            .map_err(|err| io::Error::new(io::ErrorKind::Other, format!("{:?}", err)))
+            .map_err(|err| io::Error::other(format!("{:?}", err)))
             .map(|_| buf.len())
     }
 

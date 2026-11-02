@@ -158,16 +158,6 @@ impl<'a, W: Write + 'static> Drop for PanicGuard<'a, W> {
     }
 }
 
-trait IdleProc: Send {
-    fn call(self: Box<Self>, token: usize);
-}
-
-impl<F: Send + FnOnce(usize)> IdleProc for F {
-    fn call(self: Box<F>, token: usize) {
-        (*self)(token)
-    }
-}
-
 enum ResponseHandler {
     Chan(mpsc::Sender<Result<Value, Error>>),
     Callback(Box<dyn Callback>),
@@ -540,13 +530,11 @@ impl<W: Write> RawPeer<W> {
     /// Returns `None` if no timers are registered.
     fn check_timers(&self) -> Option<Result<usize, Duration>> {
         let mut timers = self.0.timers.lock().unwrap();
-        match timers.peek() {
-            None => return None,
-            Some(t) => {
-                let now = Instant::now();
-                if t.fire_after > now {
-                    return Some(Err(t.fire_after - now));
-                }
+        {
+            let t = timers.peek()?;
+            let now = Instant::now();
+            if t.fire_after > now {
+                return Some(Err(t.fire_after - now));
             }
         }
         Some(Ok(timers.pop().unwrap().token))

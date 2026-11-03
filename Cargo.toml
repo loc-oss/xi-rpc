@@ -1,6 +1,6 @@
 [package]
 name = "xi-rpc"
-version = "0.4.0"
+version = "0.4.1"
 license = "Apache-2.0"
 authors = ["Raph Levien <raph@google.com>", "LOC-OSS Community"]
 repository = "https://github.com/loc-oss/xi-rpc"
@@ -12,5 +12,4 @@ log = "0.4.3"
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
-crossbeam-utils = "0.8"
-xi-trace = { git = "https://github.com/loc-oss/xi-trace", tag = "v0.3.1" }
+xi-trace = { git = "https://github.com/loc-oss/xi-trace", tag = "v0.3.2" }
